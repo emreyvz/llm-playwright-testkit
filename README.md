@@ -2,7 +2,7 @@
 
 Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyon çerçevesi için bir başlangıç kitidir. Yerel veya uzak LLM (Büyük Dil Modeli) hizmetlerini kullanarak CAPTCHA'ları çözme ve testler sırasında LLM'lere soru sorma gibi gelişmiş yetenekler içerir.
 
-## ✨ Temel Özellikler
+## Temel Özellikler
 
 *   **Playwright & CucumberJS Entegrasyonu:** Tarayıcı otomasyonu için Playwright, BDD için Cucumber.
 *   **TypeScript:** Statik tipleme ve daha iyi geliştirici deneyimi.
@@ -23,7 +23,7 @@ Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyo
 *   **Pre-commit Hook'lar (Manuel Kurulum):** Husky ve lint-staged ile ESLint/Prettier kontrolleri.
 *   **CI/CD Entegrasyonu (Manuel Kurulum):** GitHub Actions için örnek workflow.
 
-## 📁 Klasör Yapısı
+## Klasör Yapısı
 
 \`\`\`
 playwright-cucumber-llm-starter/
@@ -81,7 +81,7 @@ playwright-cucumber-llm-starter/
 └── tsconfig.json              # TypeScript konfigürasyon dosyası
 \`\`\`
 
-## 🚀 Kurulum
+## Kurulum
 
 1.  **Projeyi Klonlayın:**
     \`\`\`bash
@@ -174,7 +174,7 @@ playwright-cucumber-llm-starter/
     }
     \`\`\`
 
-## ⚙️ Konfigürasyon
+## Konfigürasyon
 
 *   **Ortam Değişkenleri:** \`src/environments/\` altındaki \`.env.<ortam_adi>\` dosyaları veya proje kökündeki \`.env\` dosyası aracılığıyla yapılır. \`ConfigManager\` (\`src/base/configManager.ts\`) bu değişkenleri yükler.
     *   \`NODE_ENV\`: Çalışma ortamını belirtir (örn: \`development\`, \`staging\`, \`production\`). Bu değere göre ilgili \`.env\` dosyası yüklenir.
@@ -191,7 +191,7 @@ playwright-cucumber-llm-starter/
 *   **Playwright:** \`playwright.config.ts\` dosyası üzerinden Playwright'a özel ayarlar (timeout'lar, paralel worker sayısı, raporlayıcılar, proje bazlı tarayıcı ayarları vb.) yapılır.
 *   **Cucumber:** \`cucumber.js\` dosyası üzerinden Cucumber'a özel ayarlar (feature dosyalarının yolu, step definition'ların yolu, formatlayıcılar vb.) yapılır.
 
-## ▶️ Testleri Çalıştırma
+## Testleri Çalıştırma
 
 Aşağıdaki npm script'lerini kullanarak testleri çalıştırabilirsiniz:
 
@@ -240,14 +240,14 @@ Aşağıdaki npm script'lerini kullanarak testleri çalıştırabilirsiniz:
     npm run format
     \`\`\`
 
-## 🤖 LLM Entegrasyonu
+## LLM Entegrasyonu
 
 *   **\`LLMClient\` (\`src/llm/llmClient.ts\`):**
     *   \`.env\` dosyanızdaki \`LLM_PROVIDER\`, \`LLM_ENDPOINT\`, \`LLM_API_KEY\` ve model isimleri (\`LOCAL_LLM_MODEL_NAME\`, \`OPENAI_MODEL_NAME\`) ile yapılandırılır.
     *   **CAPTCHA Çözme:** \`solveCaptcha(imageBase64: string, instructions?: string)\` metodu, bir CAPTCHA görüntüsünün base64 string'ini alır ve LLM'den çözümünü ister. \`BasePage\` içindeki \`solveAndFillCaptcha\` metodu bu işlevi kullanarak UI'daki CAPTCHA'ları otomatik olarak çözmeye çalışır. Bunun için multimodal bir LLM (örn: LLaVA, GPT-4 Vision) gereklidir.
     *   **Soru Sorma:** \`questionAnswer(prompt: string, systemPrompt?: string)\` metodu, genel amaçlı sorular sormak için kullanılabilir.
 
-## 📝 Katkıda Bulunma
+## Katkıda Bulunma
 
 Katkılarınız her zaman kabulümüzdür! Lütfen şu adımları izleyin:
 
@@ -259,7 +259,7 @@ Katkılarınız her zaman kabulümüzdür! Lütfen şu adımları izleyin:
 
 Lütfen kodlama standartlarına uyun ve değişiklikleriniz için testler ekleyin.
 
-## 📄 Lisans
+## Lisans
 
 Bu proje MIT Lisansı altındadır. Detaylar için \`LICENSE\` dosyasına bakınız (Bu projede henüz bir LICENSE dosyası eklenmedi, isterseniz ekleyebilirsiniz).
 
