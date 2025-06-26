@@ -1,15 +1,65 @@
 {
-  "name": "playwright-projesi",
+  "name": "playwright-cucumber-llm-starter",
   "version": "1.0.0",
-  "description": "",
+  "description": "A boilerplate starter kit for UI test automation with Playwright, Cucumber, and LLM-based CAPTCHA solving.",
   "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "clean-reports": "rm -rf reports/allure-results/* reports/allure-report/* reports/cucumber_report.json reports/screenshots/* playwright-report/* test-results/*",
+    "pretest": "npm run clean-reports",
+    "test": "cucumber-js",
+    "test:allure": "cucumber-js --format allure-cucumberjs:reports/allure-results/allure-results.json",
+    "test:chrome": "cross-env BROWSER=chrome npm run test",
+    "test:firefox": "cross-env BROWSER=firefox npm run test",
+    "test:webkit": "cross-env BROWSER=webkit npm run test",
+    "test:headless": "cross-env HEADLESS=true npm run test",
+    "test:chrome:allure": "cross-env BROWSER=chrome npm run test:allure",
+    "test:firefox:allure": "cross-env BROWSER=firefox npm run test:allure",
+    "test:webkit:allure": "cross-env BROWSER=webkit npm run test:allure",
+    "test:headless:allure": "cross-env HEADLESS=true npm run test:allure",
+    "report:allure": "allure generate reports/allure-results --clean -o reports/allure-report",
+    "open:allure": "allure open reports/allure-report",
+    "posttest": "npm run report:allure",
+    "test:debug": "cross-env PWDEBUG=1 cucumber-js",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "typescript",
+    "test-automation",
+    "llm",
+    "captcha"
+  ],
+  "author": "Jules AI Assistant",
+  "license": "MIT",
   "devDependencies": {
-    "@cucumber/cucumber": "^11.3.0",
-    "@playwright/test": "^1.53.1",
-    "@types/node": "^24.0.4"
+    "@cucumber/cucumber": "^10.0.1",
+    "@playwright/test": "^1.40.1",
+    "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "allure-cucumberjs": "^2.15.0",
+    "allure-commandline": "^2.24.1"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "winston": "^3.11.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": ["es2021", "dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@pages/*": ["src/pages/*"],
+      "@steps/*": ["src/steps/*"],
+      "@utils/*": ["src/utils/*"],
+      "@locators/*": ["src/locators/*"],
+      "@llm/*": ["src/llm/*"],
+      "@api/*": ["src/api/*"],
+      "@environments/*": ["src/environments/*"],
+      "@base/*": ["src/base/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "features/**/*.feature"],
+  "exclude": ["node_modules", "dist"]
+}
