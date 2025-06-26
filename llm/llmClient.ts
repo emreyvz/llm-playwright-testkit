@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { config } from '@base/configManager';
-import logger from '@utils/logger'; // Import the logger
-import { ErrorHandler, ErrorType, CustomError } from '@base/errorHandler'; // Import ErrorHandler
+import { config } from '../base/configManager';
+import logger from '../utils/logger'; // Import the logger
+import { ErrorHandler, ErrorType, CustomError } from '../base/errorHandler'; // Import ErrorHandler
 
 interface LLMResponse {
   success: boolean;
@@ -102,14 +102,13 @@ export class LLMClient {
     });
     try {
       if (this.provider === 'openai') {
-        const messages = [];
+        let messages: any[] = [];
         if (systemPrompt) {
           messages.push({ role: 'system', content: systemPrompt });
         }
         messages.push({ role: 'user', content: prompt });
 
-        const response = await this.httpClient.post<OpenAIResponse>(
-          this.provider === 'local' ? this.endpoint : '', // For OpenAI, path is empty as baseURL is the full API endpoint path
+        const response = await this.httpClient.post<OpenAIResponse>('',
           {
             model: this.modelName,
             messages: messages,
@@ -171,8 +170,7 @@ export class LLMClient {
               model: this.modelName
             });
         }
-        const response = await this.httpClient.post<OpenAIResponse>(
-            this.provider === 'local' ? this.endpoint : '', // For OpenAI, path is empty if baseURL is full endpoint path
+        const response = await this.httpClient.post<OpenAIResponse>(this.endpoint,
             {
             model: this.modelName, // e.g., "gpt-4-vision-preview"
             messages: [

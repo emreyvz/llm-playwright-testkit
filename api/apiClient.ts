@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import { config } from '@base/configManager';
-import logger from '@utils/logger'; // Import the logger
-import { ErrorHandler, ErrorType, CustomError } from '@base/errorHandler'; // Import ErrorHandler
+import { config } from '../base/configManager';
+import logger from '../utils/logger'; // Import the logger
+import { ErrorHandler } from '../base/errorHandler';
+import { ErrorType } from '../base/errorHandler';
+import { CustomError } from '../base/errorHandler';
+
 
 interface ApiResponse<T = any> {
   success: boolean;

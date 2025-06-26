@@ -9,20 +9,19 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],
-      "@pages/*": ["src/pages/*"],
-      "@steps/*": ["src/steps/*"],
-      "@utils/*": ["src/utils/*"],
-      "@locators/*": ["src/locators/*"],
-      "@llm/*": ["src/llm/*"],
-      "@api/*": ["src/api/*"],
-      "@environments/*": ["src/environments/*"],
-      "@base/*": ["src/base/*"]
+      "@pages/*": ["pages/*"],
+      "@steps/*": ["steps/*"],
+      "@utils/*": ["utils/*"],
+      "@locators/*": ["locators/*"],
+      "@llm/*": ["llm/*"],
+      "@api/*": ["api/*"],
+      "@environments/*": ["environments/*"],
+      "@base/*": ["base/*"]
     }
   },
-  "include": ["src/**/*.ts", "features/**/*.feature"],
+  "include": ["**/*.ts", "features/*.feature"],
   "exclude": ["node_modules", "dist"]
 }

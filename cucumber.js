@@ -1,14 +1,13 @@
 module.exports = {
   default: {
-    paths: ['features/**/*.feature'],
+    paths: ['features/*.feature'],
     requireModule: ['ts-node/register'],
-    require: ['src/steps/**/*.ts', 'src/hooks/**/*.ts'],
+    require: ['steps/**/*.ts', 'hooks/**/*.ts'],
     format: [
       'summary',
       'progress-bar',
       '@cucumber/pretty-formatter',
       'json:reports/cucumber_report.json', // Standard JSON report
-      'allure-cucumberjs:reports/allure-results/allure-results.json' // Allure JSON results
       // 'html:reports/cucumber_report.html' // You can enable this for an HTML report
     ],
     formatOptions: { snippetInterface: 'async-await' },

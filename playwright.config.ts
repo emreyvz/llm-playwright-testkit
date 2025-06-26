@@ -1,6 +1,6 @@
 import { defineConfig, devices, LaunchOptions } from '@playwright/test';
 import path from 'path';
-import { config as appConfig } from './src/base/configManager'; // Import our ConfigManager instance
+import { config as appConfig } from './base/configManager'; // Import our ConfigManager instance
 
 export const STORAGE_STATE = path.join(__dirname, 'playwright/.auth/user.json');
 
@@ -17,7 +17,9 @@ export default defineConfig({
      * For example in `await expect(locator).toHaveText();`
      */
     timeout: 10000, // 10 seconds
+    
   },
+  
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -44,8 +46,10 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     /* Record video */
     video: 'retain-on-failure',
+    acceptDownloads: true, 
 
-    headless: process.env.HEADLESS ? process.env.HEADLESS === 'true' : !appConfig.BROWSER_LAUNCH_ARGS?.includes('--no-headless'), // Default to true, respect --no-headless arg
+
+    headless: process.env.HEADLESS == 'true',
     viewport: (appConfig.VIEWPORT_WIDTH && appConfig.VIEWPORT_HEIGHT)
                 ? { width: appConfig.VIEWPORT_WIDTH, height: appConfig.VIEWPORT_HEIGHT }
                 : undefined, // Use Playwright default if not set

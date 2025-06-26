@@ -1,4 +1,4 @@
-import logger from '@utils/logger'; // Corrected path
+import logger from '../utils/logger'; // Corrected path
 
 export enum ErrorType {
   UI_ERROR = 'UIError',

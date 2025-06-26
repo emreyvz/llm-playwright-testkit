@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import logger from '../utils/logger';
 
 export class ConfigManager {
   private static instance: ConfigManager;

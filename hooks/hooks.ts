@@ -1,7 +1,12 @@
 import { Before, After, BeforeAll, AfterAll, Status, ITestCaseHookParameter } from '@cucumber/cucumber';
 import { Browser, BrowserContext, Page, chromium, firefox, webkit } from '@playwright/test';
 import { ICustomWorld, CustomWorld } from '../steps/customWorld'; // Ensure path is correct
-import playwrightConfig from '../../playwright.config'; // Ensure path is correct
+import playwrightConfig from '../playwright.config'; // Ensure path is correct
+import logger from '../utils/logger'; // Import logger
+import { ErrorHandler } from '../base/errorHandler';
+import { ErrorType } from '../base/errorHandler';
+import { CustomError } from '../base/errorHandler';
+
 
 let browser: Browser;
 // let context: BrowserContext; // context and page will be scenario-scoped

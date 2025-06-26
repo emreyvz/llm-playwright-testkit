@@ -1,18 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Page, Locator } from '@playwright/test';
-
-const locatorsDir = path.join(__dirname, '../locators'); // Adjust path as necessary
-
-interface LocatorStore {
-  [pageName: string]: {
-    [elementName: string]: string;
-  };
-}
-
-let loadedLocators: LocatorStore = {};
-
-import logger from '@utils/logger'; // Import logger
+import logger from '../utils/logger'; // Import logger
 import { ErrorHandler, ErrorType } from './errorHandler'; // Import ErrorHandler
 
 const locatorsDir = path.join(__dirname, '../locators'); // Adjust path as necessary
@@ -24,6 +13,8 @@ interface LocatorStore {
 }
 
 let loadedLocators: LocatorStore = {};
+
+
 
 function loadLocators(): void {
   if (Object.keys(loadedLocators).length > 0) {

@@ -1,7 +1,7 @@
 import { Locator } from '@playwright/test';
-import { BasePage } from '@base/basePage';
-import { ICustomWorld } from '@steps/customWorld';
-import { getLocator, getLocatorString } from '@base/locatorManager'; // Updated import
+import { BasePage } from '../base/basePage';
+import { ICustomWorld } from '../steps/customWorld'; // Ensure your world is correctly imported
+ import { getLocator } from '../base/locatorManager'; // We will create this later
 
 export class ExamplePage extends BasePage {
   // Define locators for this page using the locator manager
@@ -38,8 +38,9 @@ export class ExamplePage extends BasePage {
 
   async searchFor(text: string): Promise<void> {
     await this.fillText(this.searchInput, text);
-    await this.page.press('Enter'); // Example of using page directly for specific actions
+    await this.searchInput.press('Enter');
   }
+
 
   async getMainHeadingText(): Promise<string | null> {
     return this.getText(this.mainHeading);

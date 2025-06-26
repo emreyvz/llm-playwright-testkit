@@ -1,5 +1,8 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { ICustomWorld } from '@steps/customWorld'; // Ensure your world is correctly imported
+import { ICustomWorld } from '../steps/customWorld'; // Ensure your world is correctly imported
+import logger from '../utils/logger';
+import { ErrorHandler } from './errorHandler';
+import { ErrorType } from './errorHandler';
 // import { getLocator } from './locatorManager'; // We will create this later
 
 export class BasePage {
