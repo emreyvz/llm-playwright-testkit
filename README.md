@@ -46,26 +46,25 @@ Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyo
     *   Proje kök dizinine \`.env\` olarak veya \`src/environments/\` altında \`.env.development\` (ya da çalıştığınız ortama göre) olarak yeniden adlandırın.
     *   Dosya içindeki değerleri (BASE_URL, API_BASE_URL, LLM_ENDPOINT, LLM_API_KEY vb.) kendi ortamınıza göre düzenleyin.
     *   **Örnek \`.env.development\` içeriği:**
-        \`\`\`dotenv
-        BASE_URL=http://localhost:3000
-        API_BASE_URL=http://localhost:8080/api
-        USERNAME=dev_user
-        PASSWORD=dev_password
-        LLM_API_KEY=your_local_or_dev_llm_api_key
-        LLM_ENDPOINT=http://localhost:11434 # Örn: Ollama için yerel endpoint
-        LLM_PROVIDER=local # 'local', 'openai' vb.
-        LOCAL_LLM_MODEL_NAME=llava # Kullandığınız yerel model (multimodal CAPTCHA için)
-        OPENAI_MODEL_NAME=gpt-4-vision-preview # OpenAI için model
-        CAPTCHA_SOLVER_ENABLED=true
-        DEFAULT_TIMEOUT=30000
-        BROWSER_LAUNCH_ARGS=--start-maximized # Tarayıcı başlatma argümanları (virgülle ayrılmış)
-        VIEWPORT_WIDTH=1920
-        VIEWPORT_HEIGHT=1080
-        LOG_LEVEL=info
-        SLOWMO=false
-        HEADLESS=false
-        BROWSER=chromium
-        \`\`\`
+       
+        `BASE_URL=http://localhost:3000`
+        `API_BASE_URL=http://localhost:8080/api`
+        `USERNAME=dev_user`
+        `PASSWORD=dev_password`
+        `LLM_API_KEY=your_local_or_dev_llm_api_key`
+        `LLM_ENDPOINT=http://localhost:11434`
+        `LLM_PROVIDER=local`
+        `LOCAL_LLM_MODEL_NAME=llava`
+        `OPENAI_MODEL_NAME=gpt-4-vision-preview`
+        `CAPTCHA_SOLVER_ENABLED=true`
+        `DEFAULT_TIMEOUT=30000`
+        `BROWSER_LAUNCH_ARGS=--start-maximized `
+        `VIEWPORT_WIDTH=1920`
+        `VIEWPORT_HEIGHT=1080`
+        `LOG_LEVEL=info`
+        `SLOWMO=false`
+        `HEADLESS=false`
+        `BROWSER=chromium`
 
 
 ## Testleri Çalıştırma
