@@ -1,0 +1,11 @@
+{
+  "PlaywrightSite": {
+    "mainHeading": "h1:has-text('Playwright enables reliable end-to-end testing for modern web apps.')",
+    "getStartedButton": "a.getStarted",
+    "searchInput": "input[placeholder='Search']"
+  },
+  "AnotherPage": {
+    "submitButton": "#submit-id",
+    "userNameInput": "input[name='username']"
+  }
+}
