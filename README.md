@@ -26,73 +26,72 @@ Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyo
 ## Kurulum
 
 1.  **Projeyi Klonlayın:**
-    \`\`\`bash
+    ```bash
     git clone <proje_url>
     cd playwright-cucumber-llm-starter
-    \`\`\`
+    ```
 
 2.  **Bağımlılıkları Yükleyin:**
-    \`\`\`bash
+    ```bash
     npm install
-    \`\`\`
+    ```
 
 3.  **Playwright Tarayıcılarını Yükleyin:**
-    \`\`\`bash
+    ```bash
     npx playwright install --with-deps
-    \`\`\`
+    ```
 
 4.  **Ortam Dosyasını Yapılandırın:**
     *   \`src/environments/\` klasöründeki \`.env.example\` dosyasını kopyalayın.
     *   Proje kök dizinine \`.env\` olarak veya \`src/environments/\` altında \`.env.development\` (ya da çalıştığınız ortama göre) olarak yeniden adlandırın.
     *   Dosya içindeki değerleri (BASE_URL, API_BASE_URL, LLM_ENDPOINT, LLM_API_KEY vb.) kendi ortamınıza göre düzenleyin.
     *   **Örnek \`.env.development\` içeriği:**
-       
-        `BASE_URL=http://localhost:3000`
-        `API_BASE_URL=http://localhost:8080/api`
-        `USERNAME=dev_user`
-        `PASSWORD=dev_password`
-        `LLM_API_KEY=your_local_or_dev_llm_api_key`
-        `LLM_ENDPOINT=http://localhost:11434`
-        `LLM_PROVIDER=local`
-        `LOCAL_LLM_MODEL_NAME=llava`
-        `OPENAI_MODEL_NAME=gpt-4-vision-preview`
-        `CAPTCHA_SOLVER_ENABLED=true`
-        `DEFAULT_TIMEOUT=30000`
-        `BROWSER_LAUNCH_ARGS=--start-maximized `
-        `VIEWPORT_WIDTH=1920`
-        `VIEWPORT_HEIGHT=1080`
-        `LOG_LEVEL=info`
-        `SLOWMO=false`
-        `HEADLESS=false`
-        `BROWSER=chromium`
+       ```bash
+        BASE_URL=http://localhost:3000
+        API_BASE_URL=http://localhost:8080/api
+        USERNAME=dev_user
+        PASSWORD=dev_password
+        LLM_API_KEY=your_local_or_dev_llm_api_key
+        LLM_ENDPOINT=http://localhost:11434
+        LLM_PROVIDER=local
+        LOCAL_LLM_MODEL_NAME=llava
+        OPENAI_MODEL_NAME=gpt-4-vision-preview
+        CAPTCHA_SOLVER_ENABLED=true
+        DEFAULT_TIMEOUT=30000
+        BROWSER_LAUNCH_ARGS=--start-maximized 
+        VIEWPORT_WIDTH=1920
+        VIEWPORT_HEIGHT=1080
+        LOG_LEVEL=info
+        SLOWMO=false
+        HEADLESS=false
+        BROWSER=chromium
+       ```
 
 
 ## Testleri Çalıştırma
 
 Aşağıdaki npm script'lerini kullanarak testleri çalıştırabilirsiniz:
 
-*   **Tüm testleri varsayılan tarayıcı (Chromium) ile çalıştır ve Allure raporu oluştur:**
-    \`\`\`bash
-    npm test
-    \`\`\`
-    Bu komut \`pretest\` ile önce raporları temizler, ardından \`test:allure\` (veya doğrudan \`cucumber-js\`) çalıştırır ve \`posttest\` ile Allure raporunu generate eder. \`cucumber.js\` içinde Allure formatlayıcısı olduğu için \`test\` script'i de Allure sonuçlarını üretecektir.
+*   **Tüm testleri varsayılan tarayıcı (Chromium) ile çalıştır**
+    ```bash
+    npm run test
+    ```
 
 *   **Belirli bir tarayıcı ile çalıştır:**
-    \`\`\`bash
+    ```bash
     npm run test:chrome
     npm run test:firefox
     npm run test:webkit
-    \`\`\`
-    (Bu komutlar da \`posttest\` sayesinde Allure raporu üretecektir.)
+    ```
 
 *   **Headless modda çalıştır:**
-    \`\`\`bash
+    ```bash
     npm run test:headless
-    \`\`\`
+    ```
 
 ## LLM Entegrasyonu
 
-*   **\`LLMClient\` (\`src/llm/llmClient.ts\`):**
+*   **LLMClient\:**
     *   \`.env\` dosyanızdaki \`LLM_PROVIDER\`, \`LLM_ENDPOINT\`, \`LLM_API_KEY\` ve model isimleri (\`LOCAL_LLM_MODEL_NAME\`, \`OPENAI_MODEL_NAME\`) ile yapılandırılır.
     *   **CAPTCHA Çözme:** \`solveCaptcha(imageBase64: string, instructions?: string)\` metodu, bir CAPTCHA görüntüsünün base64 string'ini alır ve LLM'den çözümünü ister. \`BasePage\` içindeki \`solveAndFillCaptcha\` metodu bu işlevi kullanarak UI'daki CAPTCHA'ları otomatik olarak çözmeye çalışır. Bunun için multimodal bir LLM (örn: LLaVA, GPT-4 Vision) gereklidir.
     *   **Soru Sorma:** \`questionAnswer(prompt: string, systemPrompt?: string)\` metodu, genel amaçlı sorular sormak için kullanılabilir.
