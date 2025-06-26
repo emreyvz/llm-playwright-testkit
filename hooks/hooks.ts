@@ -1,18 +1,14 @@
 import { Before, After, BeforeAll, AfterAll, Status, ITestCaseHookParameter } from '@cucumber/cucumber';
 import { Browser, BrowserContext, Page, chromium, firefox, webkit } from '@playwright/test';
-import { ICustomWorld, CustomWorld } from '../steps/customWorld'; // Ensure path is correct
-import playwrightConfig from '../playwright.config'; // Ensure path is correct
-import logger from '../utils/logger'; // Import logger
+import { ICustomWorld, CustomWorld } from '../steps/customWorld';
+import playwrightConfig from '../playwright.config';
+import logger from '../utils/logger';
 import { ErrorHandler } from '../base/errorHandler';
 import { ErrorType } from '../base/errorHandler';
 import { CustomError } from '../base/errorHandler';
 
-
 let browser: Browser;
-// let context: BrowserContext; // context and page will be scenario-scoped
-// let page: Page; // context and page will be scenario-scoped
-
-const browserName = process.env.BROWSER || 'chromium'; // Default to chromium
+const browserName = process.env.BROWSER || 'chromium';
 
 BeforeAll(async function () {
   switch (browserName.toLowerCase()) {
@@ -32,13 +28,12 @@ Before(async function (this: ICustomWorld, scenario: ITestCaseHookParameter) {
   this.scenarioName = scenario.pickle.name;
 
   const context = await browser.newContext({
-    viewport: null, // Use default viewport or set one if needed
-    // recordVideo: playwrightConfig.use?.video ? { dir: 'test-results/videos' } : undefined, // Example for video recording
-    ...playwrightConfig.use, // Spread other context options from config
+    viewport: null,
+    ...playwrightConfig.use,
   });
   const page = await context.newPage();
 
-  this.browser = browser; // Assign the existing browser instance
+  this.browser = browser;
   this.context = context;
   this.page = page;
   this.request = context.request;
@@ -58,12 +53,12 @@ After(async function (this: ICustomWorld, scenario: ITestCaseHookParameter) {
         });
         if (imageBuffer) {
           this.attach(imageBuffer, 'image/png');
-          logger.info(`Screenshot taken and attached to Allure report for failed scenario: "${this.scenarioName}"`, { path: screenshotPath });
+          logger.info(`Screenshot taken for failed scenario: "${this.scenarioName}"`, { path: screenshotPath });
         } else {
           logger.warn(`Could not capture screenshot buffer for failed scenario: "${this.scenarioName}"`);
         }
       } catch (error: any) {
-        ErrorHandler.handle(error, ErrorType.UI_ERROR); // Log with ErrorHandler
+        ErrorHandler.handle(error, ErrorType.UI_ERROR);
         logger.error(`Failed to take or attach screenshot for scenario: "${this.scenarioName}"`, { error: error.message });
       }
     }

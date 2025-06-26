@@ -1,18 +1,15 @@
 import { Locator } from '@playwright/test';
 import { BasePage } from '../base/basePage';
-import { ICustomWorld } from '../steps/customWorld'; // Ensure your world is correctly imported
- import { getLocator } from '../base/locatorManager'; // We will create this later
+import { ICustomWorld } from '../steps/customWorld';
+import { getLocator } from '../base/locatorManager';
 
 export class ExamplePage extends BasePage {
-  // Define locators for this page using the locator manager
-  // The pageName 'PlaywrightSite' should match a key in your locator JSON files.
-  private pageName = 'PlaywrightSite'; // Or pass this in constructor if page name varies
+  private pageName = 'PlaywrightSite';
 
   constructor(world: ICustomWorld) {
     super(world);
   }
 
-  // Define getters for elements on this page
   get mainHeading(): Locator {
     return getLocator(this.page, this.pageName, 'mainHeading');
   }
@@ -22,12 +19,9 @@ export class ExamplePage extends BasePage {
   }
 
   get searchInput(): Locator {
-    // Example of getting just the string if needed elsewhere
-    // public static searchInputSelector: string = getLocatorString('PlaywrightSite', 'searchInput');
     return getLocator(this.page, this.pageName, 'searchInput');
   }
 
-  // Define page-specific actions
   async open(): Promise<void> {
     await this.navigateTo('https://playwright.dev/');
   }
@@ -40,7 +34,6 @@ export class ExamplePage extends BasePage {
     await this.fillText(this.searchInput, text);
     await this.searchInput.press('Enter');
   }
-
 
   async getMainHeadingText(): Promise<string | null> {
     return this.getText(this.mainHeading);

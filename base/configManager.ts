@@ -19,19 +19,16 @@ export class ConfigManager {
   public readonly DEFAULT_TIMEOUT: number;
   public readonly DEFAULT_RETRY_ATTEMPTS: number;
   public readonly NODE_ENV: string;
-  public readonly BROWSER_LAUNCH_ARGS?: string[]; // e.g., ["--start-fullscreen", "--disable-extensions"]
+  public readonly BROWSER_LAUNCH_ARGS?: string[];
   public readonly VIEWPORT_WIDTH?: number;
   public readonly VIEWPORT_HEIGHT?: number;
-
 
   private constructor() {
     this.NODE_ENV = process.env.NODE_ENV || 'development';
     const envFileName = `.env.${this.NODE_ENV}`;
-    const envDirPath = path.resolve(__dirname, '../environments'); // Correct path to environments directory
+    const envDirPath = path.resolve(__dirname, '../environments');
     const envFilePath = path.join(envDirPath, envFileName);
-    const defaultEnvPath = path.join(envDirPath, '.env'); // Fallback to .env if specific one not found
-
-    let loadedConfigPath = envFilePath;
+    const defaultEnvPath = path.join(envDirPath, '.env');
 
     if (fs.existsSync(envFilePath)) {
       dotenv.config({ path: envFilePath });
@@ -39,11 +36,9 @@ export class ConfigManager {
     } else if (fs.existsSync(defaultEnvPath)) {
       dotenv.config({ path: defaultEnvPath });
       logger.info(`Specific environment file ${envFileName} not found. Loaded configuration from: ${defaultEnvPath}`);
-      loadedConfigPath = defaultEnvPath;
     } else {
       logger.warn(
-        `No .env file found at ${envFilePath} or ${defaultEnvPath}. Using default process.env variables or hardcoded defaults.`,
-        { searchedPath1: envFilePath, searchedPath2: defaultEnvPath }
+        `No .env file found at ${envFilePath} or ${defaultEnvPath}. Using default process.env variables or hardcoded defaults.`
       );
       const exampleEnvPath = path.join(envDirPath, '.env.example');
       if (fs.existsSync(exampleEnvPath)) {
@@ -54,7 +49,6 @@ export class ConfigManager {
       }
     }
 
-    // Load values from process.env (which now includes those from the loaded .env file)
     this.BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
     this.API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api';
     this.USERNAME = process.env.USERNAME;
@@ -68,27 +62,18 @@ export class ConfigManager {
     this.DEFAULT_TIMEOUT = parseInt(process.env.DEFAULT_TIMEOUT || '30000', 10);
     this.DEFAULT_RETRY_ATTEMPTS = parseInt(process.env.DEFAULT_RETRY_ATTEMPTS || '2', 10);
 
-    // Browser launch arguments from .env (e.g., BROWSER_LAUNCH_ARGS="--start-fullscreen, --ignore-certificate-errors")
     this.BROWSER_LAUNCH_ARGS = process.env.BROWSER_LAUNCH_ARGS
       ? process.env.BROWSER_LAUNCH_ARGS.split(',').map(arg => arg.trim())
       : undefined;
     this.VIEWPORT_WIDTH = process.env.VIEWPORT_WIDTH ? parseInt(process.env.VIEWPORT_WIDTH, 10) : undefined;
     this.VIEWPORT_HEIGHT = process.env.VIEWPORT_HEIGHT ? parseInt(process.env.VIEWPORT_HEIGHT, 10) : undefined;
 
-
-    logger.info('Configuration loaded successfully.', {
+    logger.info('Configuration loaded.', {
       NODE_ENV: this.NODE_ENV,
       BASE_URL: this.BASE_URL,
       API_BASE_URL: this.API_BASE_URL,
       LLM_PROVIDER: this.LLM_PROVIDER,
-      LLM_ENDPOINT_Set: !!this.LLM_ENDPOINT,
       CAPTCHA_SOLVER_ENABLED: this.CAPTCHA_SOLVER_ENABLED,
-      DEFAULT_TIMEOUT: this.DEFAULT_TIMEOUT,
-      DEFAULT_RETRY_ATTEMPTS: this.DEFAULT_RETRY_ATTEMPTS,
-      BROWSER_LAUNCH_ARGS: this.BROWSER_LAUNCH_ARGS,
-      VIEWPORT_WIDTH: this.VIEWPORT_WIDTH,
-      VIEWPORT_HEIGHT: this.VIEWPORT_HEIGHT,
-      // Do not log USERNAME, PASSWORD, LLM_API_KEY directly
     });
   }
 
@@ -112,5 +97,4 @@ export class ConfigManager {
   }
 }
 
-// Export a singleton instance
 export const config = ConfigManager.getInstance();

@@ -7,16 +7,13 @@ module.exports = {
       'summary',
       'progress-bar',
       '@cucumber/pretty-formatter',
-      'json:reports/cucumber_report.json', // Standard JSON report
-      // 'html:reports/cucumber_report.html' // You can enable this for an HTML report
+      'json:reports/cucumber_report.json',
     ],
     formatOptions: { snippetInterface: 'async-await' },
-    publishQuiet: true, // Suppresses Cucumber's own publish message
-    worldParameters: {
-      // You can pass global parameters to your World context here
-    },
-    timeout: 60000, // Milliseconds
-    retry: 0, // Number of retries for failed scenarios
-    parallel: 1, // Number of parallel workers. Set to 0 to use Playwright's parallel capabilities if preferred.
+    publishQuiet: true,
+    worldParameters: {},
+    timeout: 60000,
+    retry: 0,
+    parallel: 1,
   },
 };

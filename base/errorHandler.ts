@@ -1,4 +1,4 @@
-import logger from '../utils/logger'; // Corrected path
+import logger from '../utils/logger';
 
 export enum ErrorType {
   UI_ERROR = 'UIError',
@@ -13,9 +13,9 @@ export enum ErrorType {
 export interface CustomErrorDetails {
   message: string;
   type: ErrorType;
-  cause?: any; // Original error object or additional details
-  context?: Record<string, any>; // Additional context for debugging
-  isOperational?: boolean; // True if the error is expected (e.g., validation error)
+  cause?: any;
+  context?: Record<string, any>;
+  isOperational?: boolean;
 }
 
 export class CustomError extends Error {
@@ -27,17 +27,15 @@ export class CustomError extends Error {
 
   constructor(details: CustomErrorDetails) {
     super(details.message);
-    this.name = details.type; // Set the error name to its type
+    this.name = details.type;
     this.type = details.type;
     this.cause = details.cause;
     this.context = details.context;
     this.isOperational = details.isOperational || false;
     this.timestamp = new Date().toISOString();
 
-    // This line is needed to restore the correct prototype chain.
     Object.setPrototypeOf(this, new.target.prototype);
 
-    // Capturing the stack trace, excluding the constructor call from it.
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
@@ -51,22 +49,19 @@ export class ErrorHandler {
     if (error instanceof CustomError) {
       customError = error;
     } else if (error instanceof Error) {
-      // Check for specific error types based on message or name if needed
       let type = defaultErrorType;
       if (error.name === 'TimeoutError' || error.message.toLowerCase().includes('timeout')) {
         type = ErrorType.TIMEOUT_ERROR;
       }
-      // Add more specific error type detection here if needed
 
       customError = new CustomError({
         message: error.message,
         type: type,
         cause: error,
         context: { stack: error.stack },
-        isOperational: false, // Assume non-operational if it's a generic Error
+        isOperational: false,
       });
     } else {
-      // For non-Error objects (e.g., strings or other primitives thrown)
       customError = new CustomError({
         message: typeof error === 'string' ? error : 'An unknown error occurred.',
         type: defaultErrorType,
@@ -76,7 +71,7 @@ export class ErrorHandler {
     }
 
     this.logError(customError);
-    return customError; // Optionally re-throw or return the processed error
+    return customError;
   }
 
   public static logError(error: CustomError): void {
@@ -90,7 +85,6 @@ export class ErrorHandler {
       context: error.context,
     };
 
-    // Use logger (Winston)
     if (error.isOperational) {
       logger.warn(`Operational Error: ${error.type} - ${error.message}`, logObject);
     } else {
@@ -98,7 +92,6 @@ export class ErrorHandler {
     }
   }
 
-  // Convenience method to create and log/throw an error
   public static newError(details: CustomErrorDetails, throwError: boolean = false): CustomError {
     const error = new CustomError(details);
     this.logError(error);
@@ -108,20 +101,3 @@ export class ErrorHandler {
     return error;
   }
 }
-
-// Example Usage:
-// try {
-//   // Some operation that might fail
-//   throw new Error("Something went wrong in UI interaction");
-// } catch (err) {
-//   const handledError = ErrorHandler.handle(err, ErrorType.UI_ERROR);
-//   // console.error("Caught handled error:", handledError.message);
-//   // Decide whether to re-throw, or if logging is enough
-// }
-
-// ErrorHandler.newError({
-//   message: "LLM failed to respond as expected",
-//   type: ErrorType.LLM_ERROR,
-//   context: { prompt: "some prompt" },
-//   isOperational: true
-// }, true); // This will create, log, and throw the error
