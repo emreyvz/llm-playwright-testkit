@@ -23,64 +23,6 @@ Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyo
 *   **Pre-commit Hook'lar (Manuel Kurulum):** Husky ve lint-staged ile ESLint/Prettier kontrolleri.
 *   **CI/CD Entegrasyonu (Manuel Kurulum):** GitHub Actions için örnek workflow.
 
-## Klasör Yapısı
-
-\`\`\`
-playwright-cucumber-llm-starter/
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml           # GitHub Actions CI/CD workflow (manuel oluşturulacak)
-├── .husky/                    # Husky pre-commit hook'ları (manuel ayarlanacak)
-├── features/                  # .feature Gherkin dosyaları
-│   └── example.feature
-├── logs/                      # Çalışma zamanı logları (Winston)
-├── playwright-report/         # Playwright HTML raporu
-├── reports/                   # Test raporları
-│   ├── cucumber_report.json   # Cucumber JSON raporu
-│   └── screenshots/           # Hata durumunda alınan ekran görüntüleri
-├── src/
-│   ├── api/
-│   │   └── apiClient.ts       # API istekleri için istemci
-│   ├── base/
-│   │   ├── basePage.ts        # Temel sayfa metotlarını içeren sınıf
-│   │   ├── configManager.ts   # Ortam değişkenlerini ve konfigürasyonu yönetir
-│   │   ├── errorHandler.ts    # Hata yönetimi sınıfı
-│   │   └── locatorManager.ts  # Locator'ları JSON'dan yükler ve yönetir
-│   ├── environments/          # Ortam bazlı .env dosyaları
-│   │   ├── .env.development
-│   │   ├── .env.production
-│   │   ├── .env.staging
-│   │   └── .env.example       # .env dosyası için şablon
-│   ├── hooks/
-│   │   └── hooks.ts           # Cucumber Before/After hook'ları (tarayıcı yönetimi vb.)
-│   ├── llm/
-│   │   └── llmClient.ts       # LLM etkileşimleri için istemci
-│   ├── locators/              # Sayfa elemanlarının locator'ları (JSON formatında)
-│   │   └── examplePageLocators.json
-│   ├── pages/                 # Sayfa nesnesi sınıfları
-│   │   └── examplePage.ts
-│   ├── steps/                 # Cucumber step definition dosyaları
-│   │   ├── baseSteps.ts       # Genel, tekrar kullanılabilir adımlar
-│   │   ├── customWorld.ts     # Cucumber World context'i özelleştirmesi
-│   │   └── exampleSteps.ts
-│   └── utils/                 # Yardımcı fonksiyonlar
-│       ├── dateUtils.ts
-│       ├── fileUtils.ts
-│       ├── logger.ts          # Winston loglayıcısı
-│       └── stringUtils.ts
-├── test-data/                 # Test verileri (örneğin, CSV, JSON dosyaları)
-├── test-results/              # Playwright test sonuçları (ekran görüntüleri, videolar, trace'ler)
-├── .env                       # Yerel geliştirme için ortam değişkenleri (opsiyonel, .env.development'ı kopyalayın)
-├── .eslintrc.js               # ESLint konfigürasyon dosyası (manuel oluşturulacak)
-├── .gitignore
-├── cucumber.js                # CucumberJS konfigürasyon dosyası
-├── package.json
-├── playwright.config.ts       # Playwright konfigürasyon dosyası
-├── README.md                  # Bu dosya
-└── tsconfig.json              # TypeScript konfigürasyon dosyası
-\`\`\`
-
 ## Kurulum
 
 1.  **Projeyi Klonlayın:**
