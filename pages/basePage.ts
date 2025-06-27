@@ -3,6 +3,8 @@ import { ICustomWorld } from '../steps/customWorld';
 import logger from '../utils/logger';
 import { ErrorHandler, ErrorType } from '../base/errorHandler';
 import { getLocator, getDynamicLocator } from '../base/locatorManager';
+import { LLMClient } from '@llm/llmClient';
+import { isWebUri } from 'valid-url';
 
 export class BasePage {
   protected page: Page;
@@ -30,15 +32,25 @@ export class BasePage {
     return getLocator(this.page, pageName, elementKey, options);
   }
 
-  async navigateTo(url: string): Promise<void> {
-    try {
-      logger.info(`Navigating to URL: ${url}`);
-      await this.page.goto(url);
-    } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.NAVIGATION_ERROR);
-      throw error;
+async navigateTo(url: string): Promise<void> {
+  try {
+    let finalUrl = url;
+
+    if (!isWebUri(url)) {
+      const envValue = process.env[url];
+      if (!envValue || !isWebUri(envValue)) {
+        throw new Error(`Geçerli bir URL değil ve .env içinde "${url}" adında geçerli bir URL bulunamadı.`);
+      }
+      finalUrl = envValue;
     }
+
+    logger.info(`Navigating to URL: ${finalUrl}`);
+    await this.page.goto(finalUrl);
+  } catch (error: any) {
+    ErrorHandler.handle(error, ErrorType.NAVIGATION_ERROR);
+    throw error;
   }
+}
 
   async clickElement(
     pageName: string,
@@ -370,15 +382,66 @@ export class BasePage {
     }
   }
 
+  async solveQuestionAnswerCaptcha(
+    captchaTextPageName: string,
+    captchaTextElementKey: string,
+    captchaInputPageName: string,
+    captchaInputElementKey: string,
+    llmClientInstance: LLMClient,
+    maxRetries: number = 3,
+    instructions: string = "You are a captcha solver. Solve this captcha and return your solution. Just return the captcha result as plain text. Don't spin anything else. You have to answer in whatever language the question is in."
+  ): Promise<boolean> {
+    logger.info(`Starting CAPTCHA solving process for text ${captchaTextPageName}.${captchaTextElementKey} and input ${captchaInputPageName}.${captchaInputElementKey}`);
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      logger.info(`Attempting to solve CAPTCHA, attempt ${attempt}/${maxRetries}`);
+      try {
+        const textElement = this.getElement(captchaTextPageName, captchaTextElementKey);
+        await textElement.waitFor({ state: 'visible', timeout: 10000 });
+        const text = await textElement.textContent();
+        if (text) {
+          logger.info(`CAPTCHA text found: "${text}"`);
+          const captchaSolution = await llmClientInstance.questionAnswer(text, instructions);
+          if (captchaSolution.success && captchaSolution.data) {
+            const captchaInput = this.getElement(captchaInputPageName, captchaInputElementKey);
+            await captchaInput.waitFor({ state: 'visible', timeout: 10000 });
+            await captchaInput.fill(captchaSolution.data, { timeout: 15000 });
+            logger.info(`CAPTCHA solution "${captchaSolution.data}" filled successfully.`, { attempt });
+            return true;
+          } else {
+            logger.warn(`LLM provided an empty or invalid solution for CAPTCHA.`, { attempt, solution: captchaSolution.data });
+          }
+        } else {
+          logger.warn(`Failed to retrieve CAPTCHA text.`, { attempt });
+        }
+      } catch (error: any) {
+        ErrorHandler.handle(error, ErrorType.CAPTCHA_ERROR);
+      }
+
+      if (attempt < maxRetries) {
+        logger.info(`Retrying CAPTCHA after a short delay (2s)...`, { attempt });
+        await this.page.waitForTimeout(2000); 
+      }
+    }
+
+    logger.error('Failed to solve CAPTCHA after all retries.', {
+      captchaTextPageName, captchaTextElementKey,
+      captchaInputPageName, captchaInputElementKey,
+      maxRetries
+    });
+    return false;
+  }
+
+
   // Placeholder for solveAndFillCaptcha - will need to update its locator parameters
   async solveAndFillCaptcha(
     captchaImagePageName: string,
     captchaImageElementKey: string,
     captchaInputPageName: string,
     captchaInputElementKey: string,
-    llmClientInstance: any, // Consider defining a type/interface for this
+    llmClientInstance: LLMClient,
     maxRetries: number = 3,
-    instructions?: string
+    instructions: string = "You are a captcha solver. Solve this captcha and return your solution. Just return the captcha result as plain text. Don't spin anything else."
   ): Promise<boolean> {
     logger.info(`Starting CAPTCHA solving process for image ${captchaImagePageName}.${captchaImageElementKey} and input ${captchaInputPageName}.${captchaInputElementKey}`);
 
@@ -402,7 +465,7 @@ export class BasePage {
           const captchaSolution = response.data.replace(/[^a-zA-Z0-9]/g, '');
           if (captchaSolution) {
             // Now get the input element and fill it
-            await this.fillElement(captchaInputPageName, captchaInputElementKey, captchaSolution, {timeout: 5000});
+            await this.fillElement(captchaInputPageName, captchaInputElementKey, captchaSolution, {timeout: 15000});
             logger.info(`CAPTCHA solution "${captchaSolution}" filled successfully.`, { attempt });
             return true;
           } else {

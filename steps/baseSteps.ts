@@ -1,8 +1,12 @@
-import { When, Then, Given } from '@cucumber/cucumber';
+import { When, Then, Given, setDefaultTimeout } from '@cucumber/cucumber';
 import { ICustomWorld } from './customWorld';
 import { expect } from '@playwright/test';
 import { BasePage } from '../pages/basePage';
 import { FrameLocator } from 'playwright';
+import { LLMClient } from '../llm/llmClient';
+
+const llmClientInstance = new LLMClient();
+setDefaultTimeout(60000);
 
 function getBasePage(world: ICustomWorld): BasePage {
   if (!world.basePage) {
@@ -43,17 +47,17 @@ When('I click the {string} element on the {string} page', async function (this: 
 });
 
 When('I click the {string} element on the {string} page with options:', async function (this: ICustomWorld, elementKey: string, pageName: string, optionsTable: any) {
-    const basePage = getBasePage(this);
-    const options = optionsTable.rowsHash();
-    const clickOptions: any = {};
-    if (options.button) clickOptions.button = options.button as 'left' | 'right' | 'middle';
-    if (options.clickCount) clickOptions.clickCount = parseInt(options.clickCount, 10);
-    if (options.delay) clickOptions.delay = parseInt(options.delay, 10);
-    if (options.timeout) clickOptions.timeout = parseInt(options.timeout, 10);
-    if (options.nth) clickOptions.nth = parseInt(options.nth, 10);
-    if (options.positionX && options.positionY) clickOptions.position = { x: parseInt(options.positionX, 10), y: parseInt(options.positionY, 10) };
+  const basePage = getBasePage(this);
+  const options = optionsTable.rowsHash();
+  const clickOptions: any = {};
+  if (options.button) clickOptions.button = options.button as 'left' | 'right' | 'middle';
+  if (options.clickCount) clickOptions.clickCount = parseInt(options.clickCount, 10);
+  if (options.delay) clickOptions.delay = parseInt(options.delay, 10);
+  if (options.timeout) clickOptions.timeout = parseInt(options.timeout, 10);
+  if (options.nth) clickOptions.nth = parseInt(options.nth, 10);
+  if (options.positionX && options.positionY) clickOptions.position = { x: parseInt(options.positionX, 10), y: parseInt(options.positionY, 10) };
 
-    await basePage.clickElement(pageName, elementKey, clickOptions);
+  await basePage.clickElement(pageName, elementKey, clickOptions);
 });
 
 
@@ -68,13 +72,13 @@ When('I double click the {string} element on the {string} page', async function 
 });
 
 When('I click and hold the {string} element on the {string} page', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    await basePage.clickAndHoldElement(pageName, elementKey);
+  const basePage = getBasePage(this);
+  await basePage.clickAndHoldElement(pageName, elementKey);
 });
 
-When('I release the mouse button', async function(this: ICustomWorld) {
-    const basePage = getBasePage(this);
-    await basePage.releaseMouse();
+When('I release the mouse button', async function (this: ICustomWorld) {
+  const basePage = getBasePage(this);
+  await basePage.releaseMouse();
 });
 
 When('I fill the {string} element on the {string} page with {string}', async function (this: ICustomWorld, elementKey: string, pageName: string, text: string) {
@@ -146,15 +150,15 @@ Then('the {string} element on the {string} page should be disabled', async funct
 });
 
 Then('the {string} element on the {string} page should be checked', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    const isChecked = await basePage.isElementChecked(pageName, elementKey);
-    expect(isChecked).toBe(true);
+  const basePage = getBasePage(this);
+  const isChecked = await basePage.isElementChecked(pageName, elementKey);
+  expect(isChecked).toBe(true);
 });
 
 Then('the {string} element on the {string} page should not be checked', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    const isChecked = await basePage.isElementChecked(pageName, elementKey);
-    expect(isChecked).toBe(false);
+  const basePage = getBasePage(this);
+  const isChecked = await basePage.isElementChecked(pageName, elementKey);
+  expect(isChecked).toBe(false);
 });
 
 
@@ -204,107 +208,117 @@ When('I scroll to the {string} element on the {string} page', async function (th
 });
 
 When('I scroll the page by {int} pixels horizontally and {int} pixels vertically', async function (this: ICustomWorld, deltaX: number, deltaY: number) {
-    const basePage = getBasePage(this);
-    await basePage.scrollPage(deltaX, deltaY);
+  const basePage = getBasePage(this);
+  await basePage.scrollPage(deltaX, deltaY);
 });
 
 
-When('I switch to the default content', async function(this: ICustomWorld) {
-    const basePage = getBasePage(this);
-    await basePage.switchToDefaultContent();
-    this.currentFrame = undefined;
+When('I switch to the default content', async function (this: ICustomWorld) {
+  const basePage = getBasePage(this);
+  await basePage.switchToDefaultContent();
+  this.currentFrame = undefined;
 });
 
 
-When('I switch to page with index {int}', async function(this: ICustomWorld, pageIndex: number) {
-    const basePage = getBasePage(this);
-    const newPage = await basePage.switchToPage(pageIndex);
-    expect(newPage).not.toBeNull();
-    if (newPage) this.page = newPage;
+When('I switch to page with index {int}', async function (this: ICustomWorld, pageIndex: number) {
+  const basePage = getBasePage(this);
+  const newPage = await basePage.switchToPage(pageIndex);
+  expect(newPage).not.toBeNull();
+  if (newPage) this.page = newPage;
 });
 
-When('I close the current page', async function(this: ICustomWorld) {
-    const basePage = getBasePage(this);
-    await basePage.closeCurrentPage();
+When('I close the current page', async function (this: ICustomWorld) {
+  const basePage = getBasePage(this);
+  await basePage.closeCurrentPage();
 });
 
 
-When('I accept the dialog', async function(this: ICustomWorld) {
-    const basePage = getBasePage(this);
-    await basePage.acceptDialog();
+When('I accept the dialog', async function (this: ICustomWorld) {
+  const basePage = getBasePage(this);
+  await basePage.acceptDialog();
 });
 
-When('I dismiss the dialog', async function(this: ICustomWorld) {
-    const basePage = getBasePage(this);
-    await basePage.dismissDialog();
+When('I dismiss the dialog', async function (this: ICustomWorld) {
+  const basePage = getBasePage(this);
+  await basePage.dismissDialog();
 });
 
-When('I fill the dialog with {string}', async function(this: ICustomWorld, text: string) {
-    const basePage = getBasePage(this);
-    await basePage.fillInDialog(text);
+When('I fill the dialog with {string}', async function (this: ICustomWorld, text: string) {
+  const basePage = getBasePage(this);
+  await basePage.fillInDialog(text);
 });
 
-Then('the dialog message should be {string}', async function(this: ICustomWorld, expectedMessage: string) {
-    const basePage = getBasePage(this);
-    const message = await basePage.getDialogMessage();
-    expect(message).toBe(expectedMessage);
+Then('the dialog message should be {string}', async function (this: ICustomWorld, expectedMessage: string) {
+  const basePage = getBasePage(this);
+  const message = await basePage.getDialogMessage();
+  expect(message).toBe(expectedMessage);
 });
 
-When('I execute javascript {string}', async function(this: ICustomWorld, script: string) {
-    const basePage = getBasePage(this);
-    this.lastJsResult = await basePage.executeJavaScript(script);
+When('I execute javascript {string}', async function (this: ICustomWorld, script: string) {
+  const basePage = getBasePage(this);
+  this.lastJsResult = await basePage.executeJavaScript(script);
 });
 
-When('I execute javascript {string} with arguments:', async function(this: ICustomWorld, script: string, argsTable: any) {
-    const basePage = getBasePage(this);
-    const args = argsTable.rows().map((row: any) => row[0]);
-    this.lastJsResult = await basePage.executeJavaScript(script, args);
+When('I execute javascript {string} with arguments:', async function (this: ICustomWorld, script: string, argsTable: any) {
+  const basePage = getBasePage(this);
+  const args = argsTable.rows().map((row: any) => row[0]);
+  this.lastJsResult = await basePage.executeJavaScript(script, args);
 });
 
-Then('the last javascript result should be {string}', function(this: ICustomWorld, expectedResult: string) {
-    expect(String(this.lastJsResult)).toBe(expectedResult);
+Then('the last javascript result should be {string}', function (this: ICustomWorld, expectedResult: string) {
+  expect(String(this.lastJsResult)).toBe(expectedResult);
 });
 
-Then('the last javascript result should be {int}', function(this: ICustomWorld, expectedResult: number) {
-    expect(Number(this.lastJsResult)).toBe(expectedResult);
+Then('the last javascript result should be {int}', function (this: ICustomWorld, expectedResult: number) {
+  expect(Number(this.lastJsResult)).toBe(expectedResult);
 });
 
 Then('I expect the {string} element on the {string} page to have text {string}', async function (this: ICustomWorld, elementKey: string, pageName: string, expectedText: string) {
-    const basePage = getBasePage(this);
-    await basePage.expectElementToHaveText(pageName, elementKey, expectedText);
+  const basePage = getBasePage(this);
+  await basePage.expectElementToHaveText(pageName, elementKey, expectedText);
 });
 
 Then('I expect the {string} element on the {string} page to be visible', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    await basePage.expectElementToBeVisible(pageName, elementKey);
+  const basePage = getBasePage(this);
+  await basePage.expectElementToBeVisible(pageName, elementKey);
 });
 
 Then('I expect the {string} element on the {string} page to be hidden', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    await basePage.expectElementToBeHidden(pageName, elementKey);
+  const basePage = getBasePage(this);
+  await basePage.expectElementToBeHidden(pageName, elementKey);
 });
 
 Then('I expect the {string} element on the {string} page to be enabled', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    await basePage.expectElementToBeEnabled(pageName, elementKey);
+  const basePage = getBasePage(this);
+  await basePage.expectElementToBeEnabled(pageName, elementKey);
 });
 
 Then('I expect the {string} element on the {string} page to be disabled', async function (this: ICustomWorld, elementKey: string, pageName: string) {
-    const basePage = getBasePage(this);
-    await basePage.expectElementToBeDisabled(pageName, elementKey);
+  const basePage = getBasePage(this);
+  await basePage.expectElementToBeDisabled(pageName, elementKey);
 });
 
 When('I interact with the {string} element on the {string} page using {string} action with placeholders:', async function (this: ICustomWorld, elementKey: string, pageName: string, action: string) {
-    const basePage = getBasePage(this);
+  const basePage = getBasePage(this);
 
-    switch (action.toLowerCase()) {
-        case 'click':
-            await basePage.clickElement(pageName, elementKey);
-            break;
-        case 'fill':
-            throw new Error(`Action 'fill' requires text. Please use a more specific step or modify this one.`);
-        default:
-            throw new Error(`Action "${action}" is not implemented in this generic step.`);
-    }
+  switch (action.toLowerCase()) {
+    case 'click':
+      await basePage.clickElement(pageName, elementKey);
+      break;
+    case 'fill':
+      throw new Error(`Action 'fill' requires text. Please use a more specific step or modify this one.`);
+    default:
+      throw new Error(`Action "${action}" is not implemented in this generic step.`);
+  }
+});
+
+When('I solve {string} element captcha on the {string} page and fill the result into the {string} element on the {string} page', async function (this: ICustomWorld, captchaElementKey: string, captchaPageName: string, resultElementKey: string, resultPageName: string) {
+  const basePage = getBasePage(this);
+  await basePage.solveAndFillCaptcha(captchaPageName, captchaElementKey, resultPageName, resultElementKey, llmClientInstance);
+});
+
+When('I solve {string} element question captcha on the {string} page and fill the result into the {string} element on the {string} page', async function (this: ICustomWorld, captchaElementKey: string, captchaPageName: string, resultElementKey: string, resultPageName: string) {
+  const basePage = getBasePage(this);
+  await basePage.solveQuestionAnswerCaptcha(captchaPageName, captchaElementKey, resultPageName, resultElementKey, llmClientInstance);
 });
 
