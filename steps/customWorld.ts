@@ -1,7 +1,8 @@
 import { World, IWorldOptions, setWorldConstructor } from '@cucumber/cucumber';
-import { BrowserContext, Page, PlaywrightTestOptions, APIRequestContext } from '@playwright/test';
-import { Browser, chromium, firefox, webkit } from '@playwright/test';
-import playwrightConfig from '../playwright.config';
+import { BrowserContext, Page, PlaywrightTestOptions, APIRequestContext, FrameLocator } from '@playwright/test';
+import { Browser } from '@playwright/test'; // Removed specific browser imports as they are not used here
+// import playwrightConfig from '../playwright.config'; // playwrightConfig is not used in this file
+import { BasePage } from '../base/basePage'; // For type hinting
 
 export interface ICustomWorld extends World {
   browser?: Browser;
@@ -11,6 +12,12 @@ export interface ICustomWorld extends World {
   featureName?: string;
   scenarioName?: string;
   playwrightOptions?: PlaywrightTestOptions;
+
+  // Added properties
+  basePage?: BasePage;
+  worldMap?: Map<string, any>;
+  currentFrame?: FrameLocator;
+  lastJsResult?: any;
 }
 
 export class CustomWorld extends World implements ICustomWorld {
@@ -22,8 +29,15 @@ export class CustomWorld extends World implements ICustomWorld {
   scenarioName?: string;
   playwrightOptions?: PlaywrightTestOptions;
 
+  // Added properties
+  basePage?: BasePage;
+  worldMap?: Map<string, any>;
+  currentFrame?: FrameLocator;
+  lastJsResult?: any;
+
   constructor(options: IWorldOptions) {
     super(options);
+    this.worldMap = new Map<string, any>(); // Initialize worldMap
   }
 }
 
