@@ -1,5 +1,14 @@
 {
   "2CaptchaDemoPage": {
-    "normalCaptchaMenuButton": "//a[@href='/demo/normal']"
+    "normalCaptchaMenuButton": "//a[@href='/demo/normal']",
+    "questionAnswerMenuButton": "//a[@href='/demo/text']"
+  },
+  "NormalCaptchaPage": {
+    "captchaImage": "//img[@alt='normal captcha example']",
+    "captchaInput": "//input[@id='simple-captcha-field']"
+  },
+  "QuestionAnswerCaptchaPage": {
+    "captchaText": "//label[@for='text-captcha-field']",
+    "captchaInput": "//input[@id='text-captcha-field']"
   }
 }

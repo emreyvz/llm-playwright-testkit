@@ -10,6 +10,8 @@
     "test:webkit": "cross-env BROWSER=webkit npm run test",
     "test:headless": "cross-env HEADLESS=true npm run test",
     "test:debug": "cross-env PWDEBUG=1 cucumber-js",
+    "questionAnswerCaptcha": "cucumber-js --tags @questionAnswerCaptcha",
+    "normalCaptcha": "cucumber-js --tags @normalCaptcha",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write ."
   },
@@ -28,6 +30,7 @@
     "@cucumber/pretty-formatter": "^1.0.1",
     "@playwright/test": "^1.40.1",
     "@types/node": "^20.10.4",
+    "@types/valid-url": "^1.0.7",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "cross-env": "^7.0.3",
@@ -43,6 +46,7 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
+    "valid-url": "^1.0.9",
     "winston": "^3.11.0"
   },
   "lint-staged": {

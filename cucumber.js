@@ -13,6 +13,7 @@ module.exports = {
     publishQuiet: true,
     worldParameters: {},
     timeout: 60000,
+    stepTimeout: 60000,
     retry: 0,
     parallel: 1,
   },

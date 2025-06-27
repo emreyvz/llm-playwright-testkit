@@ -66,12 +66,14 @@ export class LLMClient {
     }
 
     this.httpClient = axios.create({
-      baseURL: this.provider !== 'local' ? this.endpoint : undefined,
+      baseURL: this.provider === 'openai' ? this.endpoint : undefined,
       headers: {
         'Content-Type': 'application/json',
+        ...(this.provider === 'openai' && this.apiKey
+          ? { Authorization: `Bearer ${this.apiKey}` }
+          : {}),
       },
     });
-
     if (this.provider === 'openai' && this.apiKey) {
       this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${this.apiKey}`;
       this.modelName = config.OPENAI_MODEL_NAME || 'gpt-3.5-turbo';
@@ -95,12 +97,13 @@ export class LLMClient {
         }
         messages.push({ role: 'user', content: prompt });
 
-        const response = await this.httpClient.post<OpenAIResponse>('',
-          {
-            model: this.modelName,
-            messages: messages,
-          }
-        );
+        const response = await this.httpClient.post<OpenAIResponse>('/v1/chat/completions', {
+          model: this.modelName,
+          messages: [
+            ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+            { role: 'user', content: prompt },
+          ],
+        });
         if (response.data.choices && response.data.choices.length > 0) {
           logger.debug('OpenAI Q/A response successful.');
           return { success: true, data: response.data.choices[0].message?.content?.trim() };
@@ -140,31 +143,25 @@ export class LLMClient {
 
     try {
       if (this.provider === 'openai') {
-        if (!this.modelName?.includes('vision')) {
-            logger.warn(`OpenAI model ${this.modelName} may not support vision. CAPTCHA solving might fail or produce incorrect results.`, {
-              model: this.modelName
-            });
-        }
-        const response = await this.httpClient.post<OpenAIResponse>(this.endpoint,
+        const response = await this.httpClient.post<OpenAIResponse>('/v1/chat/completions', {
+          model: this.modelName,
+          messages: [
             {
-            model: this.modelName,
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  { type: 'text', text: promptText },
-                  {
-                    type: 'image_url',
-                    image_url: {
-                      url: `data:image/png;base64,${imageBase64}`,
-                      detail: "low"
-                    },
+              role: 'user',
+              content: [
+                { type: 'text', text: promptText },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: `data:image/png;base64,${imageBase64}`,
+                    detail: "low",
                   },
-                ],
-              },
-            ],
-            max_tokens: 100,
-          });
+                },
+              ],
+            },
+          ],
+          max_tokens: 100,
+        });
         if (response.data.choices && response.data.choices.length > 0) {
           logger.debug('OpenAI CAPTCHA response successful.');
           return { success: true, data: response.data.choices[0].message?.content?.trim() };

@@ -23,9 +23,9 @@ export class ConfigManager {
   public readonly VIEWPORT_WIDTH?: number;
   public readonly VIEWPORT_HEIGHT?: number;
 
-  private constructor() {
-    this.NODE_ENV = process.env.NODE_ENV || 'development';
-    const envFileName = `.env.${this.NODE_ENV}`;
+  public constructor() {
+    this.NODE_ENV = process.env.NODE_ENV || 'prod';
+    const envFileName = `${this.NODE_ENV}.env`;
     const envDirPath = path.resolve(__dirname, '../environments');
     const envFilePath = path.join(envDirPath, envFileName);
     const defaultEnvPath = path.join(envDirPath, '.env');
