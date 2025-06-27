@@ -1,7 +1,7 @@
 import { World, IWorldOptions, setWorldConstructor } from '@cucumber/cucumber';
 import { BrowserContext, Page, PlaywrightTestOptions, APIRequestContext } from '@playwright/test';
-import { Browser, chromium, firefox, webkit } from '@playwright/test'; // Corrected import
-import playwrightConfig from '../playwright.config'; // Adjusted path
+import { Browser, chromium, firefox, webkit } from '@playwright/test';
+import playwrightConfig from '../playwright.config';
 
 export interface ICustomWorld extends World {
   browser?: Browser;

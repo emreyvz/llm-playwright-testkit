@@ -1,14 +1,4 @@
-/**
- * Date Utility Functions
- */
 export class DateUtils {
-  /**
-   * Formats a Date object or a date string into a specified string format.
-   * @param date The date to format (Date object, or string parsable by Date constructor).
-   * @param format The desired format string (e.g., 'YYYY-MM-DD HH:mm:ss').
-   *               Supported tokens: YYYY, YY, MM, DD, HH, hh, mm, ss, A (for AM/PM).
-   * @returns The formatted date string.
-   */
   static formatDate(date: Date | string, format: string = 'YYYY-MM-DD HH:mm:ss'): string {
     const d = typeof date === 'string' ? new Date(date) : date;
 
@@ -38,21 +28,10 @@ export class DateUtils {
     return formattedString;
   }
 
-  /**
-   * Gets the current date and time formatted as 'YYYY-MM-DD_HH-mm-ss'.
-   * Useful for creating unique filenames or timestamps.
-   * @returns The formatted current timestamp string.
-   */
   static getCurrentTimestampForFilename(): string {
     return this.formatDate(new Date(), 'YYYY-MM-DD_HH-mm-ss');
   }
 
-  /**
-   * Adds a specified number of days to a date.
-   * @param date The starting date (Date object or string).
-   * @param days The number of days to add (can be negative to subtract).
-   * @returns A new Date object with the days added.
-   */
   static addDays(date: Date | string, days: number): Date {
     const d = typeof date === 'string' ? new Date(date) : new Date(date.getTime());
     if (isNaN(d.getTime())) {
@@ -62,11 +41,3 @@ export class DateUtils {
     return d;
   }
 }
-
-// Example Usage:
-// import { DateUtils } from './dateUtils';
-// console.log(DateUtils.formatDate(new Date())); // Uses default format
-// console.log(DateUtils.formatDate(new Date(), 'MM/DD/YY hh:mm A'));
-// console.log(DateUtils.getCurrentTimestampForFilename());
-// console.log(DateUtils.addDays(new Date(), 5));
-// console.log(DateUtils.addDays('2023-01-01', -10));
