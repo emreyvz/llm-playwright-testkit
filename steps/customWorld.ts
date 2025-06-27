@@ -37,7 +37,7 @@ export class CustomWorld extends World implements ICustomWorld {
 
   constructor(options: IWorldOptions) {
     super(options);
-    this.worldMap = new Map<string, any>(); // Initialize worldMap
+    this.worldMap = new Map<string, any>();
   }
 }
 
