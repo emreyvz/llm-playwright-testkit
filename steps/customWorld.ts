@@ -2,7 +2,7 @@ import { World, IWorldOptions, setWorldConstructor } from '@cucumber/cucumber';
 import { BrowserContext, Page, PlaywrightTestOptions, APIRequestContext, FrameLocator } from '@playwright/test';
 import { Browser } from '@playwright/test'; // Removed specific browser imports as they are not used here
 // import playwrightConfig from '../playwright.config'; // playwrightConfig is not used in this file
-import { BasePage } from '../base/basePage'; // For type hinting
+import { BasePage } from '../pages/basePage'; // For type hinting
 
 export interface ICustomWorld extends World {
   browser?: Browser;

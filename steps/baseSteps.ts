@@ -1,10 +1,9 @@
 import { When, Then, Given, DataTable } from '@cucumber/cucumber';
 import { ICustomWorld } from './customWorld';
 import { expect } from '@playwright/test';
-import { BasePage } from '../base/basePage'; // Import BasePage
+import { BasePage } from '../pages/basePage';
 import { FrameLocator } from 'playwright';
 
-// Helper function to get BasePage instance
 function getBasePage(world: ICustomWorld): BasePage {
   if (!world.basePage) {
     world.basePage = new BasePage(world);
@@ -12,14 +11,12 @@ function getBasePage(world: ICustomWorld): BasePage {
   return world.basePage;
 }
 
-// Helper function to parse optional timeout from step
 function parseTimeout(optionsString?: string): number | undefined {
   if (!optionsString) return undefined;
   const match = optionsString.match(/timeout:(\d+)/);
   return match ? parseInt(match[1], 10) : undefined;
 }
 
-// Helper function to parse dynamic replacements from DataTable
 function parseDynamicReplacements(dataTable?: DataTable): Record<string, string | number> | undefined {
     if (!dataTable) return undefined;
     const replacements: Record<string, string | number> = {};
@@ -35,12 +32,11 @@ When('I wait for {int} seconds', async function (this: ICustomWorld, seconds: nu
 });
 
 Then('I should see the page title contains {string}', async function (this: ICustomWorld, expectedTitlePart: string) {
-  const page = this.page!; // Assuming page is always available from ICustomWorld
-  await expect(page).toHaveTitle(new RegExp(expectedTitlePart));
+  const page = this.page!; 
+  expect(await page.title()).toContain(expectedTitlePart);
 });
 
 When('I navigate to {string}', async function (this: ICustomWorld, url: string) {
-  // This step now uses BasePage's navigateTo for consistency and error handling
   const basePage = getBasePage(this);
   await basePage.navigateTo(url);
 });
@@ -50,18 +46,14 @@ Then('the current URL should be {string}', async function (this: ICustomWorld, e
   await expect(page).toHaveURL(expectedUrl);
 });
 
-// --- New Steps for BasePage methods ---
-
-// Click Actions
-When('I click the {string} element on the {string} page', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
+When('I click the {string} element on the {string} page', async function (this: ICustomWorld, elementKey: string, pageName: string) {
   const basePage = getBasePage(this);
-  const replacements = parseDynamicReplacements(dataTable);
-  await basePage.clickElement(pageName, elementKey, undefined, replacements);
+  await basePage.clickElement(pageName, elementKey, { nth: 1 });
 });
 
 When('I click the {string} element on the {string} page with options:', async function (this: ICustomWorld, elementKey: string, pageName: string, optionsTable: DataTable) {
     const basePage = getBasePage(this);
-    const options = optionsTable.rowsHash(); // { button: 'right', clickCount: '2', delay: '100', timeout: '5000', nth: '0' }
+    const options = optionsTable.rowsHash();
     const clickOptions: any = {};
     if (options.button) clickOptions.button = options.button as 'left' | 'right' | 'middle';
     if (options.clickCount) clickOptions.clickCount = parseInt(options.clickCount, 10);
@@ -71,7 +63,7 @@ When('I click the {string} element on the {string} page with options:', async fu
     if (options.positionX && options.positionY) clickOptions.position = { x: parseInt(options.positionX, 10), y: parseInt(options.positionY, 10) };
 
     let replacements: Record<string, string | number> | undefined;
-    if (options.dynamicPlaceholders) { // Assuming dynamicPlaceholders is a JSON string or similar in the table
+    if (options.dynamicPlaceholders) { 
         try {
             replacements = JSON.parse(options.dynamicPlaceholders);
         } catch (e) {
@@ -105,7 +97,6 @@ When('I release the mouse button', async function(this: ICustomWorld) {
     await basePage.releaseMouse();
 });
 
-// Input Actions
 When('I fill the {string} element on the {string} page with {string}', async function (this: ICustomWorld, elementKey: string, pageName: string, text: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
@@ -124,14 +115,12 @@ When('I clear the {string} element on the {string} page', async function (this: 
   await basePage.clearElement(pageName, elementKey, undefined, replacements);
 });
 
-// Hover Action
 When('I hover over the {string} element on the {string} page', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
   await basePage.hoverElement(pageName, elementKey, undefined, replacements);
 });
 
-// Drag and Drop
 When('I drag the {string} element on the {string} page to the {string} element on the {string} page', async function (this: ICustomWorld, sourceKey: string, sourcePage: string, targetKey: string, targetPage: string) {
   const basePage = getBasePage(this);
   // This step could be extended with DataTables for dynamic replacements for source/target if needed
@@ -139,7 +128,6 @@ When('I drag the {string} element on the {string} page to the {string} element o
 });
 
 
-// Getters and Assertions
 Then('the text of the {string} element on the {string} page should be {string}', async function (this: ICustomWorld, elementKey: string, pageName: string, expectedText: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
@@ -204,29 +192,24 @@ Then('the {string} element on the {string} page should not be checked', async fu
 });
 
 
-// Waits
-When('I wait for the {string} element on the {string} page to be visible( with options: {string})?', async function (this: ICustomWorld, elementKey: string, pageName: string, optionsStr?: string, dataTable?: DataTable) {
+When('I wait for the {string} element on the {string} page to be visible', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
-  const timeout = parseTimeout(optionsStr);
   const replacements = parseDynamicReplacements(dataTable);
-  await basePage.waitForElementToBeVisible(pageName, elementKey, timeout, replacements);
+  await basePage.waitForElementToBeVisible(pageName, elementKey, 10, replacements);
 });
 
-When('I wait for the {string} element on the {string} page to be hidden( with options: {string})?', async function (this: ICustomWorld, elementKey: string, pageName: string, optionsStr?: string, dataTable?: DataTable) {
+When('I wait for the {string} element on the {string} page to be hidden', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
-  const timeout = parseTimeout(optionsStr);
   const replacements = parseDynamicReplacements(dataTable);
-  await basePage.waitForElementToBeHidden(pageName, elementKey, timeout, replacements);
+  await basePage.waitForElementToBeHidden(pageName, elementKey, 10, replacements);
 });
 
-When('I wait for the {string} element on the {string} page to be clickable( with options: {string})?', async function (this: ICustomWorld, elementKey: string, pageName: string, optionsStr?: string, dataTable?: DataTable) {
+When('I wait for the {string} element on the {string} page to be clickable', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
-  const timeout = parseTimeout(optionsStr);
   const replacements = parseDynamicReplacements(dataTable);
-  await basePage.waitForElementToBeClickable(pageName, elementKey, timeout, replacements);
+  await basePage.waitForElementToBeClickable(pageName, elementKey, 10, replacements);
 });
 
-// Select (Dropdown) Actions
 When('I select the option with label {string} from the {string} dropdown on the {string} page', async function (this: ICustomWorld, label: string, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
@@ -245,7 +228,6 @@ When('I select the option at index {int} from the {string} dropdown on the {stri
   await basePage.selectOptionByIndex(pageName, elementKey, index, undefined, replacements);
 });
 
-// Screenshot Actions
 When('I take a screenshot of the {string} element on the {string} page and save it as {string}', async function (this: ICustomWorld, elementKey: string, pageName: string, filePath: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
@@ -257,7 +239,6 @@ When('I take a full page screenshot and save it as {string}', async function (th
   await basePage.takeFullPageScreenshot(filePath);
 });
 
-// Scrolling
 When('I scroll to the {string} element on the {string} page', async function (this: ICustomWorld, elementKey: string, pageName: string, dataTable?: DataTable) {
   const basePage = getBasePage(this);
   const replacements = parseDynamicReplacements(dataTable);
@@ -269,58 +250,29 @@ When('I scroll the page by {int} pixels horizontally and {int} pixels vertically
     await basePage.scrollPage(deltaX, deltaY);
 });
 
-// Frame/Page Switching
-When('I switch to the {string} frame identified by element {string} on the {string} page', async function (this: ICustomWorld, frameNameAlias: string, elementKey: string, pageName: string, dataTable?: DataTable) {
-    const basePage = getBasePage(this);
-    const replacements = parseDynamicReplacements(dataTable);
-    const frameLocator = await basePage.switchToFrame(pageName, elementKey, undefined, replacements);
-    if (frameLocator) {
-        this.worldMap.set(frameNameAlias, frameLocator); // Store FrameLocator in world for further use
-        this.currentFrame = frameLocator; // Optionally set current frame context
-    } else {
-        throw new Error(`Could not switch to frame ${pageName}.${elementKey}`);
-    }
-});
 
 When('I switch to the default content', async function(this: ICustomWorld) {
     const basePage = getBasePage(this);
     await basePage.switchToDefaultContent();
-    this.currentFrame = undefined; // Reset current frame context
+    this.currentFrame = undefined;
 });
 
-// To use operations within a frame after switching:
-// Given I am in the "myFrame" frame
-// When I click the "internalButton" element on the "somePage" page (this step would need modification to use this.currentFrame)
 
 When('I switch to page with index {int}', async function(this: ICustomWorld, pageIndex: number) {
     const basePage = getBasePage(this);
     const newPage = await basePage.switchToPage(pageIndex);
     expect(newPage).not.toBeNull();
-    if (newPage) this.page = newPage; // Update world's current page
+    if (newPage) this.page = newPage; 
 });
-
-// Example for switching by title (predicate)
-// When('I switch to page with title containing {string}', async function(this: ICustomWorld, titlePart: string) {
-//     const basePage = getBasePage(this);
-//     const newPage = await basePage.switchToPage(async (p) => (await p.title()).includes(titlePart));
-//     expect(newPage).not.toBeNull();
-//     if (newPage) this.page = newPage;
-// });
 
 When('I close the current page', async function(this: ICustomWorld) {
     const basePage = getBasePage(this);
     await basePage.closeCurrentPage();
-    // this.page will be updated by basePage.closeCurrentPage() if other pages are available
 });
 
 
-// Dialog Handling
 When('I accept the dialog', async function(this: ICustomWorld) {
     const basePage = getBasePage(this);
-    // Setup listener before action that triggers dialog for more robust handling
-    // this.page.once('dialog', dialog => dialog.accept());
-    // await basePage.triggerActionThatOpensDialog(); // e.g. click a button
-    // For reactive handling (if dialog is already expected or appears fast):
     await basePage.acceptDialog();
 });
 
@@ -336,28 +288,18 @@ When('I fill the dialog with {string}', async function(this: ICustomWorld, text:
 
 Then('the dialog message should be {string}', async function(this: ICustomWorld, expectedMessage: string) {
     const basePage = getBasePage(this);
-    // This step is tricky due to the async nature of dialogs.
-    // It's better to capture the message via page.on('dialog') and store it in the world context.
-    // For this example, we'll try the reactive getDialogMessage, but it might be flaky.
     const message = await basePage.getDialogMessage();
     expect(message).toBe(expectedMessage);
 });
 
-// JavaScript Execution
 When('I execute javascript {string}', async function(this: ICustomWorld, script: string) {
     const basePage = getBasePage(this);
     this.lastJsResult = await basePage.executeJavaScript(script); // Store result in world context
 });
 
-// Example for script with arguments:
-// When I execute javascript "return arguments[0] * arguments[1];" with arguments:
-//  | arg1 | 10 |
-//  | arg2 | 5  |
-// Then the last javascript result should be 50
 When('I execute javascript {string} with arguments:', async function(this: ICustomWorld, script: string, argsTable: DataTable) {
     const basePage = getBasePage(this);
     const args = argsTable.rows().map(row => row[0]); // Simple list of args
-    // For key-value args, you'd parse argsTable.hashes()
     this.lastJsResult = await basePage.executeJavaScript(script, args);
 });
 
@@ -400,35 +342,19 @@ Then('I expect the {string} element on the {string} page to be disabled', async 
     await basePage.expectElementToBeDisabled(pageName, elementKey, undefined, replacements);
 });
 
-// Step for dynamic locators using DataTable (generic example)
-// When I click the "userRow" element on the "userTable" page with placeholders:
-//   | placeholder | value    |
-//   | userId      | 123      |
-//   | action      | "edit"   |
-// (Assuming locator string is like: //tr[@data-user-id='${userId}']//button[text()='${action}'] )
 When('I interact with the {string} element on the {string} page using {string} action with placeholders:', async function (this: ICustomWorld, elementKey: string, pageName: string, action: string, dataTable: DataTable) {
     const basePage = getBasePage(this);
     const replacements = parseDynamicReplacements(dataTable);
     if (!replacements) throw new Error("DataTable for dynamic replacements was not provided or was empty.");
 
-    // Example: Extend this for various actions
     switch (action.toLowerCase()) {
         case 'click':
             await basePage.clickElement(pageName, elementKey, undefined, replacements);
             break;
         case 'fill':
-            // This specific step would need another parameter for the text to fill
-            // e.g. When I "fill" the "inputField" element on "formPage" with "some text" using placeholders:
             throw new Error(`Action 'fill' requires text. Please use a more specific step or modify this one.`);
-        // Add more cases for other actions: hover, getText, etc.
         default:
             throw new Error(`Action "${action}" is not implemented in this generic step.`);
     }
 });
 
-// Note: The CAPTCHA solving step is complex and might be better suited for a specific step in exampleSteps.ts
-// or a higher-level abstraction, as it requires an LLM client instance.
-// If you want a generic one here, it would look something like:
-// When I solve CAPTCHA using image {string} on page {string} and input {string} on page {string}
-// This would require the LLM client to be available in `this.world`.
-// For now, skipping direct BaseStep for solveAndFillCaptcha.

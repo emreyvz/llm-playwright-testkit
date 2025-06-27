@@ -1,5 +1,5 @@
 // import { Locator } from '@playwright/test'; // No longer directly returning Locator objects
-import { BasePage } from '../base/basePage';
+import { BasePage } from './basePage';
 import { ICustomWorld } from '../steps/customWorld';
 // import { getLocator } from '../base/locatorManager'; // getLocator is now used within BasePage methods
 

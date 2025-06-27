@@ -1,8 +1,8 @@
 import { Page, Locator, expect, FrameLocator } from '@playwright/test';
 import { ICustomWorld } from '../steps/customWorld';
 import logger from '../utils/logger';
-import { ErrorHandler, ErrorType } from './errorHandler';
-import { getLocator, getDynamicLocator } from './locatorManager';
+import { ErrorHandler, ErrorType } from '../base/errorHandler';
+import { getLocator, getDynamicLocator } from '../base/locatorManager';
 
 export class BasePage {
   protected page: Page;
@@ -10,8 +10,8 @@ export class BasePage {
   constructor(world: ICustomWorld) {
     if (!world.page) {
       const err = new Error("Page object is not initialized in the current world context. Ensure hooks are set up correctly.");
-      ErrorHandler.handle(err, ErrorType.FATAL);
-      throw err; // Ensure execution stops
+      ErrorHandler.handle(err, ErrorType.VALIDATION_ERROR);
+      throw err;
     }
     this.page = world.page;
   }
@@ -39,7 +39,7 @@ export class BasePage {
       logger.info(`Navigating to URL: ${url}`);
       await this.page.goto(url);
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.NAVIGATION_ERROR, { url });
+      ErrorHandler.handle(error, ErrorType.NAVIGATION_ERROR);
       throw error;
     }
   }
@@ -70,7 +70,7 @@ export class BasePage {
         timeout: timeout,
       });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'clickElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -89,7 +89,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.fill(text, { timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, text, action: 'fillElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -108,7 +108,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.type(text, { delay: options?.delay, timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, text, action: 'typeElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -126,7 +126,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       return await element.textContent();
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR, { pageName, elementKey, action: 'getElementText', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR);
       throw error;
     }
   }
@@ -145,7 +145,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       return await element.getAttribute(attributeName, { timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR, { pageName, elementKey, attributeName, action: 'getElementAttribute', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR);
       throw error;
     }
   }
@@ -202,7 +202,7 @@ export class BasePage {
       });
       return await element.isEnabled({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR, { pageName, elementKey, action: 'isElementEnabled', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR);
       throw error;
     }
   }
@@ -221,7 +221,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.selectOption(label as any, { timeout }); // Cast as any for Playwright's flexible signature
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, label, action: 'selectOptionByLabel', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -239,7 +239,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       return element;
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.WAIT_ERROR, { pageName, elementKey, state: 'visible', timeout, dynamicReplacements, nth });
+      ErrorHandler.handle(error, ErrorType.WAIT_ERROR);
       throw error;
     }
   }
@@ -256,7 +256,7 @@ export class BasePage {
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth });
       await element.waitFor({ state: 'hidden', timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.WAIT_ERROR, { pageName, elementKey, state: 'hidden', timeout, dynamicReplacements, nth });
+      ErrorHandler.handle(error, ErrorType.WAIT_ERROR);
       throw error;
     }
   }
@@ -274,7 +274,7 @@ export class BasePage {
       await element.waitFor({ state: 'attached', timeout }); // Element should at least be in the DOM
       await element.scrollIntoViewIfNeeded({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'scrollToElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -292,7 +292,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.hover({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'hoverElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -302,7 +302,7 @@ export class BasePage {
       logger.info(`Taking full page screenshot, saving to: ${path}`, { options });
       return await this.page.screenshot({ path, fullPage: true, timeout: options?.timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.IO_ERROR, { path, action: 'takeFullPageScreenshot', options });
+      ErrorHandler.handle(error, ErrorType.IO_ERROR);
       throw error;
     }
   }
@@ -311,16 +311,16 @@ export class BasePage {
     pageName: string,
     elementKey: string,
     expectedText: string | RegExp,
-    options?: { timeout?: number; useFallback?: boolean; nth?: number }, // useFallback not directly used by Playwright's toHaveText
+    options?: { timeout?: number; nth?: number },
     dynamicReplacements?: Record<string, string | number>
   ): Promise<void> {
     const timeout = options?.timeout || 10000;
     try {
       logger.debug(`Expecting element ${pageName}.${elementKey} to have text: "${expectedText}"`, { options, dynamicReplacements });
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth: options?.nth });
-      await expect(element).toHaveText(expectedText, { timeout, useFallback: options?.useFallback });
+      await expect(element).toHaveText(expectedText, { timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR, { pageName, elementKey, expectedText, action: 'expectElementToHaveText', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR);
       throw error;
     }
   }
@@ -337,7 +337,7 @@ export class BasePage {
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth: options?.nth });
       await expect(element).toBeVisible({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR, { pageName, elementKey, action: 'expectElementToBeVisible', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR);
       throw error;
     }
   }
@@ -354,7 +354,7 @@ export class BasePage {
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth: options?.nth });
       await expect(element).toBeHidden({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR, { pageName, elementKey, action: 'expectElementToBeHidden', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR);
       throw error;
     }
   }
@@ -371,7 +371,7 @@ export class BasePage {
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth: options?.nth });
       await expect(element).toBeEnabled({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR, { pageName, elementKey, action: 'expectElementToBeEnabled', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR);
       throw error;
     }
   }
@@ -388,7 +388,7 @@ export class BasePage {
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth: options?.nth });
       await expect(element).toBeDisabled({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR, { pageName, elementKey, action: 'expectElementToBeDisabled', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.ASSERTION_ERROR);
       throw error;
     }
   }
@@ -439,15 +439,7 @@ export class BasePage {
       } catch (error: any) {
         // ErrorHandler.handle is called within fillElement if it fails.
         // We need to handle errors from getElement, screenshot, or llmClientInstance.solveCaptcha
-        ErrorHandler.handle(error, ErrorType.CAPTCHA_ERROR, {
-          message: `Error during CAPTCHA solving attempt ${attempt}.`,
-          originalError: error.message,
-          attempt,
-          captchaImagePageName,
-          captchaImageElementKey,
-          captchaInputPageName,
-          captchaInputElementKey
-        });
+        ErrorHandler.handle(error, ErrorType.CAPTCHA_ERROR);
       }
 
       if (attempt < maxRetries) {
@@ -476,7 +468,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.click({ button: 'right', delay: options?.delay, position: options?.position, timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'rightClickElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -494,7 +486,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.dblclick({ delay: options?.delay, position: options?.position, timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'doubleClickElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -519,7 +511,7 @@ export class BasePage {
         throw new Error('Element bounding box not found for clickAndHold.');
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'clickAndHoldElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -529,7 +521,7 @@ export class BasePage {
       logger.info('Releasing mouse (mouse.up())');
       await this.page.mouse.up();
     } catch (error: any) {
-        ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { action: 'releaseMouse' });
+        ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
         throw error;
     }
   }
@@ -556,7 +548,7 @@ export class BasePage {
         timeout,
       });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { sourcePageName, sourceElementKey, targetPageName, targetElementKey, action: 'dragAndDropElement', options, sourceDynamicReplacements, targetDynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -574,7 +566,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.fill('', { timeout }); // Playwright's recommended way to clear
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, action: 'clearElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -592,7 +584,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout }); // Ensure it's visible before checking state
       return await element.isChecked({ timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR, { pageName, elementKey, action: 'isElementChecked', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR);
       throw error;
     }
   }
@@ -608,13 +600,13 @@ export class BasePage {
       logger.info(`Switching to frame: ${framePageName}.${frameElementKey}`, { options, dynamicReplacements });
       const frameAsElement = this.getElement(framePageName, frameElementKey, dynamicReplacements, { nth: options?.nth });
       await frameAsElement.waitFor({ state: 'attached', timeout });
-      const frameLocator = this.page.frameLocator(getLocatorString(framePageName, frameElementKey)); // FrameLocator needs the selector string
+      const frameLocator = this.page.frameLocator(this.getLocatorString(framePageName, frameElementKey)); // FrameLocator needs the selector string
       // Potentially add a wait for a known element within the frame to ensure it's loaded
       // await frameLocator.locator('body').waitFor({ state: 'visible', timeout: 5000 });
       logger.info(`Successfully switched to frame: ${framePageName}.${frameElementKey}. Subsequent element interactions will be relative to this frame if using the returned FrameLocator's methods.`);
       return frameLocator;
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.FRAME_ERROR, { framePageName, frameElementKey, action: 'switchToFrame', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.FRAME_ERROR);
       throw error;
     }
   }
@@ -636,7 +628,7 @@ export class BasePage {
       // No explicit action like Selenium's driver.switchTo().defaultContent() is usually needed unless you've reassigned this.page
       // For clarity, this method exists. If a FrameLocator was stored and used, ensure to switch back to using `this.page`.
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.FRAME_ERROR, { action: 'switchToDefaultContent' });
+      ErrorHandler.handle(error, ErrorType.FRAME_ERROR);
       throw error;
     }
   }
@@ -679,7 +671,7 @@ export class BasePage {
         return null;
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.PAGE_ERROR, { action: 'switchToPage', criteria: pageIndexOrPredicate.toString() });
+      ErrorHandler.handle(error, ErrorType.PAGE_ERROR);
       throw error;
     }
   }
@@ -699,7 +691,7 @@ export class BasePage {
          // Potentially throw or handle this state if a page is always expected.
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.PAGE_ERROR, { action: 'closeCurrentPage', pageUrl: this.page?.url() });
+      ErrorHandler.handle(error, ErrorType.PAGE_ERROR);
       throw error;
     }
   }
@@ -709,7 +701,7 @@ export class BasePage {
       logger.info(`Scrolling page by X: ${deltaX}, Y: ${deltaY}`);
       await this.page.mouse.wheel(deltaX, deltaY);
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { action: 'scrollPage', deltaX, deltaY });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -728,7 +720,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       return await element.screenshot({ path, timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.IO_ERROR, { pageName, elementKey, path, action: 'takeScreenshotOfElement', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.IO_ERROR);
       throw error;
     }
   }
@@ -743,13 +735,10 @@ export class BasePage {
     try {
       logger.debug(`Waiting for element to be clickable: ${pageName}.${elementKey}`, { timeout, dynamicReplacements, nth });
       const element = this.getElement(pageName, elementKey, dynamicReplacements, { nth });
-      await element.waitFor({ state: 'visible', timeout }); // First visible
-      await element.waitFor({ state: 'enabled', timeout }); // Then enabled
-      // Playwright doesn't have a direct 'clickable' state like Selenium, visible & enabled is the common check.
-      // We could also check for obscurity if needed, but that's more complex.
+      await element.waitFor({ state: 'visible', timeout }); 
       return element;
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.WAIT_ERROR, { pageName, elementKey, state: 'clickable (visible and enabled)', timeout, dynamicReplacements, nth });
+      ErrorHandler.handle(error, ErrorType.WAIT_ERROR);
       throw error;
     }
   }
@@ -768,7 +757,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.selectOption(value as any, { timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, value, action: 'selectOptionByValue', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -787,7 +776,7 @@ export class BasePage {
       await element.waitFor({ state: 'visible', timeout });
       await element.selectOption(index as any, { timeout });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR, { pageName, elementKey, index, action: 'selectOptionByIndex', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_ACTION_ERROR);
       throw error;
     }
   }
@@ -812,7 +801,7 @@ export class BasePage {
         }));
       });
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR, { pageName, elementKey, action: 'getElementSelectOptions', options, dynamicReplacements });
+      ErrorHandler.handle(error, ErrorType.UI_QUERY_ERROR);
       throw error;
     }
   }
@@ -834,7 +823,7 @@ export class BasePage {
         // throw new Error('Dialog not found to accept.');
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR, { action: 'acceptDialog', options });
+      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR);
       throw error;
     }
   }
@@ -855,7 +844,7 @@ export class BasePage {
         logger.warn('No dialog appeared to dismiss within timeout.');
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR, { action: 'dismissDialog', options });
+      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR);
       throw error;
     }
   }
@@ -891,7 +880,7 @@ export class BasePage {
       return message;
 
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR, { action: 'getDialogMessage', options });
+      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR);
       // Do not rethrow if the intent is to return null on no dialog
       return null;
     }
@@ -917,19 +906,17 @@ export class BasePage {
         throw new Error('Dialog not found to fill.');
       }
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR, { action: 'fillInDialog', promptText, options });
+      ErrorHandler.handle(error, ErrorType.DIALOG_ERROR);
       throw error;
     }
   }
 
-  async executeJavaScript<R>(script: string | ((arg?: any) => R), arg?: any): Promise<R> {
+  async executeJavaScript(script: string | ((arg?: any) => any), arg?: any): Promise<void> {
     try {
       logger.info('Executing JavaScript.', { script: script.toString(), arg });
-      const result = await this.page.evaluate(script as any, arg);
-      logger.debug('JavaScript execution result:', { result });
-      return result;
+      await this.page.evaluate(script as any, arg);
     } catch (error: any) {
-      ErrorHandler.handle(error, ErrorType.JAVASCRIPT_ERROR, { action: 'executeJavaScript', script: script.toString(), arg });
+      ErrorHandler.handle(error, ErrorType.JAVASCRIPT_ERROR);
       throw error;
     }
   }
