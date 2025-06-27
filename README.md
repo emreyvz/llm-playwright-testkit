@@ -98,7 +98,9 @@ You can run tests using the following npm scripts:
 
 # Playwright Cucumber LLM Starter Kit
 
-Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyon çerçevesi için bir başlangıç kitidir. Yerel veya uzak LLM (Büyük Dil Modeli) hizmetlerini kullanarak CAPTCHA'ları çözme ve testler sırasında LLM'lere soru sorma gibi gelişmiş yetenekler içerir.
+Bu proje, Playwright, Cucumber ve TypeScript kullanarak modern bir test otomasyon çerçevesi için bir başlangıç kitidir. Yerel veya uzak LLM (Büyük Dil Modeli) hizmetlerini kullanarak CAPTCHA'ları çözme ve testler sırasında LLM'lere soru sorma gibi gelişmiş yetenekler içerir. 
+
+[Projenin kullanımına yönelik detaylı Türkçe kaynağa buradan ulaşabilirsiniz.](https://medium.com/@emreyavuz528/playwright-ve-llm-deste%C4%9Fi-ile-captcha-bypass-edebilen-otomasyon-%C3%A7er%C3%A7evesi-nas%C4%B1l-yaz%C4%B1l%C4%B1r-28716894146f)
 
 ## Temel Özellikler
 
